@@ -8,7 +8,7 @@
 ## 機能説明
 
 ```
-$ python nlp100_00-09.py
+$ python 00.py // 問題番号.py
 ```
 
 - 上記で10問ずつ回答が表示される
@@ -24,4 +24,4 @@ $ python nlp100_00-09.py
 $ python nlp100_00-09.py
 ```
 
-- do that, print answer
+- do that, print answer // No.py
