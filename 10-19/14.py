@@ -6,7 +6,7 @@ import sys
 argv = sys.argv
 n = int(argv[1])
 
-with open("hightemp.txt") as f:
+with open("tmp/hightemp.txt") as f:
     for i, l in enumerate(f):
         print(l, end="")
         if i == n-1:

@@ -2,7 +2,7 @@
 # 行数をカウントせよ．確認にはwcコマンドを用いよ．
 
 cnt = 0
-with open("hightemp.txt", "r") as f:
+with open("tmp/hightemp.txt", "r") as f:
     for l in f:
         cnt += 1
 

@@ -7,7 +7,7 @@ import math
 argv = sys.argv
 n = int(argv[1])
 
-with open("hightemp.txt", "r") as f:
+with open("tmp/hightemp.txt", "r") as f:
     files = f.readlines()
 
 cnt = len(files)
