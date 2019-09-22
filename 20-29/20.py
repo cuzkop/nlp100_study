@@ -5,7 +5,7 @@ import gzip
 import json
 
 with gzip.open("tmp/jawiki-country.json.gz", "rt") as f:
-     for l in f:
-         jl = json.loads(l)
-         if jl["title"] == "イギリス":
-             print(jl["text"])
+    for l in f:
+        jl = json.loads(l)
+        if jl["title"] == "イギリス":
+            print(jl["text"])
