@@ -2,6 +2,7 @@
 # 文章中に出現する単語とその出現頻度を求め，出現頻度の高い順に並べよ．
 
 import MeCab
+from collections import Counter
 
 with open("tmp/neko.txt", "r") as f, open("tmp/neko.txt.mecab", "w") as mf:
     m = MeCab.Tagger()
@@ -37,3 +38,14 @@ for s in reversed(sortedDict):
     print(s)
 
 
+
+# 後から知ったがこれの方が便利そう
+
+l = createList()
+
+counter = Counter()
+for ls in l:
+    counter.update([d["surface"] for d in ls])
+
+lw = counter.most_common()
+print(lw)
