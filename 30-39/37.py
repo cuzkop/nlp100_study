@@ -5,6 +5,7 @@ import MeCab
 from collections import Counter
 import matplotlib.pyplot as plt
 import numpy as np
+import japanize_matplotlib
 
 with open("tmp/neko.txt", "r") as f, open("tmp/neko.txt.mecab", "w") as mf:
     m = MeCab.Tagger()
