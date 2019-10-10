@@ -36,8 +36,8 @@ def createList():
                 if m[0] == "*":
                     continue
 
-                c = m.split('\t')
-                s = c[1].split(',')
+                c = m.split("\t")
+                s = c[1].split(",")
                 l.append(Morph(c[0], s[6], s[0], s[1]))
 
         raise StopIteration
