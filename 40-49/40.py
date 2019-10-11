@@ -43,10 +43,6 @@ def createList():
         raise StopIteration
 
 
-
-
-createList()
-
 for i, m in enumerate(createList(), 1):
     if i == 3:
         for morph in m:
