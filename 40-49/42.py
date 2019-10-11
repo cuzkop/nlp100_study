@@ -35,6 +35,12 @@ class Chunk:
             surface += morph.surface
         return "{} 係り先: dst[{}]".format(surface, self.dst)
 
+    def getSurface(self):
+        surface = ""
+        for morph in self.morphs:
+            surface += morph.surface
+        return surface
+
 
 def createList():
     with open("tmp/neko.txt.cabocha", "r") as mf:
@@ -75,12 +81,15 @@ def createList():
         raise StopIteration
 
 
+for i, c in enumerate(createList(), 1):
+    for chunk in c:
+        if chunk.dst == -1:
+            continue
 
+        src = chunk.getSurface()
+        dst = c[chunk.dst].getSurface()
+        
+        if src == "" or dst == "":
+            continue
 
-createList()
-
-for i, m in enumerate(createList(), 1):
-    if i == 8:
-        for morph in m:
-            print(morph)
-        break
+        print("{}\t{}".format(src, dst))
