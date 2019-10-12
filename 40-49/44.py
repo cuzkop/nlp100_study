@@ -90,15 +90,38 @@ def createList():
         raise StopIteration
 
 
-for i, c in enumerate(createList(), 1):
-    for chunk in c:
+for index, c in enumerate(createList()):
+
+    lst = []
+    for i, chunk in enumerate(c):
         if chunk.dst == -1:
             continue
-        if chunk.getPos("名詞") and c[chunk.dst].getPos("動詞"):
-            src = chunk.getSurface()
-            dst = c[chunk.dst].getSurface()
-            
-            if src == "" or dst == "":
-                continue
 
-            print("{}\t{}".format(src, dst))
+        src = chunk.getSurface()
+        dst = c[chunk.dst].getSurface()
+            
+        if src == "" or dst == "":
+            continue
+
+        lst.append(((i, src), (chunk.dst, dst)))
+
+    
+    if len(lst) < 1:
+        continue
+
+    graph = pydot.Dot(graph_type="graph")
+
+    for l in lst:
+        id1, id2 = str(l[0][0]), str(l[1][0])
+        label1, label2 = str(l[0][1]), str(l[1][1])
+
+        graph.add_node(pydot.Node(id1, label=label1))
+        graph.add_node(pydot.Node(id2, label=label2))
+
+        graph.add_edge(pydot.Edge(id1, id2))
+
+        if index == 3 or index == 6:
+            # 全部やると重いので2ファイルだけ
+            graph.write_png("tmp/graph{}.png".format(index))
+
+
