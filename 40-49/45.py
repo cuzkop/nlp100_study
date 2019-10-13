@@ -61,6 +61,13 @@ class Chunk:
 
         return False
 
+    def getMorph(self, pos, pos1=''):
+        m = self.morphs
+        if len(pos1) > 0:
+            return [m for m in self.morphs if (m.pos == pos) and (m.pos1 == pos1)]
+        else:
+            return [m for m in self.morphs if m.pos == pos]
+
 
 
 def createList():
@@ -100,5 +107,33 @@ def createList():
                 chunks[i].morphs.append(Morph(c[0], s[6], s[0], s[1]))
 
         raise StopIteration
+
+
+with open("tmp/45_result.txt", mode='w') as f:
+    for c in createList():
+        for chunk in c:
+            verb = chunk.getMorph("動詞")
+
+            if len(verb) < 1:
+                continue
+
+            affects = []
+            for src in chunk.srcs:
+                s = c[src].getMorph("助詞")
+                if len(s) < 1:
+                    continue
+
+                if len(s) > 1:
+                    case = c[src].getMorph("助詞", "格助詞")
+                    if len(case) > 0:
+                        s = case
+
+                if len(s) > 0:
+                    affects.append(s[-1])
+
+            if len(affects) < 1:
+                continue
+
+            f.write("{}\t{}\n".format(verb[0].base, " ".join(sorted(a.surface for a in affects))))
 
 
