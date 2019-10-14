@@ -62,7 +62,6 @@ class Chunk:
         return False
 
     def getMorph(self, pos, pos1=''):
-        m = self.morphs
         if len(pos1) > 0:
             return [m for m in self.morphs if (m.pos == pos) and (m.pos1 == pos1)]
         else:
