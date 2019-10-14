@@ -60,8 +60,8 @@ def createList():
         for l in mf:
             if l == "EOS\n":
                 if len(chunks) > 0:
-                    sorted_tuple = sorted(chunks.items(), key=lambda x: x[0])
-                    yield list(zip(*sorted_tuple))[1]
+                    sortedDict = sorted(chunks.items(), key=lambda x: x[0])
+                    yield list(zip(*sortedDict))[1]
                     chunks.clear()
                 else:
                     yield []
