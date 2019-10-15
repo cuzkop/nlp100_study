@@ -67,21 +67,12 @@ class Chunk:
         else:
             return [m for m in self.morphs if m.pos == pos]
 
-    def get_sahen_wo(self):
-        '''「サ変接続名詞＋を」を含無場合は、その部分の表層形を返す
-
-        戻り値：
-        「サ変接続名詞＋を」の文字列、なければ空文字列
-        '''
+    def getSaRow(self):
         for i, morph in enumerate(self.morphs[0:-1]):
-
-            if (morph.pos == '名詞') \
-                    and (morph.pos1 == 'サ変接続') \
-                    and (self.morphs[i + 1].pos == '助詞') \
-                    and (self.morphs[i + 1].surface == 'を'):
+            if morph.pos == "名詞" and morph.pos1 == "サ変接続" and self.morphs[i + 1].pos == "助詞" and self.morphs[i + 1].surface == "を":
                 return morph.surface + self.morphs[i + 1].surface
 
-        return ''
+        return ""
 
 
 
@@ -124,35 +115,44 @@ def createList():
         raise StopIteration
 
 
-with open("tmp/46_result.txt", mode='w') as f:
+with open("tmp/47_result.txt", mode='w') as f:
     for i, c in enumerate(createList()):
-        if i == 7: # 例問通り8行目のみ、回答は全てあり
-            for chunk in c:
-                verb = chunk.getMorph("動詞")
+        for chunk in c:
+            verb = chunk.getMorph("動詞")
 
-                if len(verb) < 1:
+            if len(verb) < 1:
+                continue
+
+            chunks = []
+            for src in chunk.srcs:
+                s = c[src].getMorph("助詞")
+                if len(s) < 1:
                     continue
 
-                chunks = []
-                for src in chunk.srcs:
-                    s = c[src].getMorph("助詞")
-                    if len(s) < 1:
-                        continue
+                if len(s) > 1:
+                    case = c[src].getMorph("助詞", "格助詞")
+                    if len(case) > 0:
+                        s = case
 
-                    if len(s) > 1:
-                        case = c[src].getMorph("助詞", "格助詞")
-                        if len(case) > 0:
-                            s = case
+                if len(s) > 0:
+                    chunks.append(c[src])
 
-                    if len(s) > 0:
-                        chunks.append(c[src])
+            if len(chunks) < 1:
+                continue
 
-                if len(chunks) < 1:
-                    continue
+            s = ""
+            for chunkSrc in chunks:
+                s = chunkSrc.getSaRow()
+                if len(s) > 0:
+                    rm = chunkSrc
+                    break
+            
+            if len(s) < 1:
+                continue
 
-                for chunkSrc in chunks:
-                    print(chunkSrc)
+            chunks.remove(rm)
 
-                f.write("{}\t{}\t{}\n".format(verb[0].base, " ".join(ch.getMorph("助詞")[-1].surface for ch in chunks), " ".join(ch.getSurface() for ch in chunks)))
+
+            f.write("{}\t{}\t{}\n".format(s + verb[0].base, " ".join(ch.getMorph("助詞")[-1].surface for ch in chunks), " ".join(ch.getSurface() for ch in chunks)))
 
 
