@@ -1,17 +1,17 @@
-# 45. 動詞の格パターンの抽出
-# 今回用いている文章をコーパスと見なし，日本語の述語が取りうる格を調査したい． 動詞を述語，動詞に係っている文節の助詞を格と考え，述語と格をタブ区切り形式で出力せよ． ただし，出力は以下の仕様を満たすようにせよ．
+# 47. 機能動詞構文のマイニング
+# 動詞のヲ格にサ変接続名詞が入っている場合のみに着目したい．46のプログラムを以下の仕様を満たすように改変せよ．
 
-# 動詞を含む文節において，最左の動詞の基本形を述語とする
-# 述語に係る助詞を格とする
+# 「サ変接続名詞+を（助詞）」で構成される文節が動詞に係る場合のみを対象とする
+# 述語は「サ変接続名詞+を+動詞の基本形」とし，文節中に複数の動詞があるときは，最左の動詞を用いる
 # 述語に係る助詞（文節）が複数あるときは，すべての助詞をスペース区切りで辞書順に並べる
-# 「吾輩はここで始めて人間というものを見た」という例文（neko.txt.cabochaの8文目）を考える． この文は「始める」と「見る」の２つの動詞を含み，「始める」に係る文節は「ここで」，「見る」に係る文節は「吾輩は」と「ものを」と解析された場合は，次のような出力になるはずである．
+# 述語に係る文節が複数ある場合は，すべての項をスペース区切りで並べる（助詞の並び順と揃えよ）
+# 例えば「別段くるにも及ばんさと、主人は手紙に返事をする。」という文から，以下の出力が得られるはずである．
 
-# 始める  で
-# 見る    は を
+# 返事をする      と に は        及ばんさと 手紙に 主人は
 # このプログラムの出力をファイルに保存し，以下の事項をUNIXコマンドを用いて確認せよ．
 
-# コーパス中で頻出する述語と格パターンの組み合わせ
-# 「する」「見る」「与える」という動詞の格パターン（コーパス中で出現頻度の高い順に並べよ）
+# コーパス中で頻出する述語（サ変接続名詞+を+動詞）
+# コーパス中で頻出する述語と助詞パターン
 
 import CaboCha
 import pydot_ng as pydot
@@ -67,6 +67,13 @@ class Chunk:
         else:
             return [m for m in self.morphs if m.pos == pos]
 
+    def getSaRow(self):
+        for i, morph in enumerate(self.morphs[0:-1]):
+            if morph.pos == "名詞" and morph.pos1 == "サ変接続" and self.morphs[i + 1].pos == "助詞" and self.morphs[i + 1].surface == "を":
+                return morph.surface + self.morphs[i + 1].surface
+
+        return ""
+
 
 
 def createList():
@@ -108,15 +115,15 @@ def createList():
         raise StopIteration
 
 
-with open("tmp/45_result.txt", mode='w') as f:
-    for c in createList():
+with open("tmp/47_result.txt", mode='w') as f:
+    for i, c in enumerate(createList()):
         for chunk in c:
             verb = chunk.getMorph("動詞")
 
             if len(verb) < 1:
                 continue
 
-            affects = []
+            chunks = []
             for src in chunk.srcs:
                 s = c[src].getMorph("助詞")
                 if len(s) < 1:
@@ -128,11 +135,24 @@ with open("tmp/45_result.txt", mode='w') as f:
                         s = case
 
                 if len(s) > 0:
-                    affects.append(s[-1])
+                    chunks.append(c[src])
 
-            if len(affects) < 1:
+            if len(chunks) < 1:
                 continue
 
-            f.write("{}\t{}\n".format(verb[0].base, " ".join(sorted(a.surface for a in affects))))
+            s = ""
+            for chunkSrc in chunks:
+                s = chunkSrc.getSaRow()
+                if len(s) > 0:
+                    rm = chunkSrc
+                    break
+            
+            if len(s) < 1:
+                continue
+
+            chunks.remove(rm)
+
+
+            f.write("{}\t{}\t{}\n".format(s + verb[0].base, " ".join(ch.getMorph("助詞")[-1].surface for ch in chunks), " ".join(ch.getSurface() for ch in chunks)))
 
 
