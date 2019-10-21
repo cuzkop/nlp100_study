@@ -23,7 +23,7 @@ $ python 00-10/00.py // 問題番号.py
 ## how to use
 
 ```
-$ python nlp100_00-09.py
+$ python 00-10/00.py
 ```
 
 - do that, print answer // No.py
