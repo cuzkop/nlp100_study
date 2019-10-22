@@ -3,6 +3,7 @@
 
 import re
 import sys
+from stemming.porter2 import stem
 
 def get_sentence():
     with open("tmp/nlp.txt", "r") as nlp_file:
@@ -17,8 +18,12 @@ def get_sentence():
             else:
                 yield line
 
-for sentence in get_sentence():
-    for s in sentence.split(" "):
-        print(s)
-    
-    print("\n")
+def get_word():
+    for sentence in get_sentence():
+        for s in sentence.split(" "):
+            yield s
+
+
+for word in get_word():
+    w = word.rstrip(".,;:?!")
+    print(stem(w))
