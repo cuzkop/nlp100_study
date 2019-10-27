@@ -29,18 +29,16 @@ for sentence in tree.iterfind("./document/sentences/sentence"):
         if org_rest == 0 and (sent_id, token_id) in representative_mentions:
             (end, rep_text) = representative_mentions[(sent_id, token_id)]
 
-            print(rep_text + '(', end='')
+            print(rep_text + "(", end="")
             org_rest = end - token_id
 
-        # token出力
-        print(token.findtext('word'), end='')
+        print(token.findtext("word"), end="")
 
-        # 置換の終わりなら閉じカッコを挿入
         if org_rest > 0:
             org_rest -= 1
             if org_rest == 0:
-                print(')', end='')
+                print(")", end="")
 
-        print(' ', end='')
+        print(" ", end="")
 
     print()
