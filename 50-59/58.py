@@ -9,5 +9,24 @@ import xml.etree.ElementTree as ET
 
 tree = ET.parse("tmp/nlp.txt.xml")
 
+dep_text = {}
+dep_nsubj = {}
+dep_dobj = {}
+
 for sentence in tree.iterfind("./document/sentences/sentence"):
     sentence_id = int(sentence.get("id"))
+    for dep in sentence.findall("./dependencies[@type='collapsed-dependencies']/dep"):
+        if dep.get("type") == "dobj" or dep.get("type") == "nsubj":
+            dep_text[dep.find("./governor").get("idx")] = dep.find("./governor").text
+
+            if dep.get("type") == "dobj":
+                dep_dobj[dep.find("./governor").get("idx")] = dep.find("./dependent").text
+
+            if dep.get("type") == "nsubj":
+                dep_nsubj[dep.find("./governor").get("idx")] = dep.find("./dependent").text
+            
+    for idx, txt in dep_text.items():
+        n = dep_nsubj.get(idx)
+        d = dep_dobj.get(idx)
+        if d != None and n != None:
+            print("{}\t{}\t{}".format(n, txt, d))
