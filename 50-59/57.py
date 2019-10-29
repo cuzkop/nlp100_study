@@ -8,7 +8,7 @@ tree = ET.parse("tmp/nlp.txt.xml")
 
 for sentence in tree.iterfind("./document/sentences/sentence"):
     sentence_id = int(sentence.get("id"))
-    if sentence_id == 3:
+    if sentence_id == 3: # 多くなりすぎるので2枚まで
         break
 
     edges = []
