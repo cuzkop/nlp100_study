@@ -15,4 +15,3 @@ with open("tmp/artist.json", "r") as file:
     for f in file:
         line = json.loads(f)
         redis.set(line["name"], line.get("area", ""))
-        redis.expire(line["name"], 300)
