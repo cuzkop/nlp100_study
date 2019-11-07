@@ -11,7 +11,6 @@ import json
 redis = redis.Redis(host="localhost", port=6379, db=0)
 
 with open("tmp/artist.json", "r") as file:
-    cnt = 0
     for f in file:
         line = json.loads(f)
         redis.set(line["name"], line.get("area", ""))
