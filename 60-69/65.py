@@ -5,7 +5,7 @@ import json
 from pymongo import MongoClient 
 
 client = MongoClient("localhost", 27017)
-db = client.artist_db
+db = client.artist_db2
 collection = db.artist
 
 for queen in collection.find({'name':'Queen'}):
