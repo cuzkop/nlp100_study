@@ -37,17 +37,17 @@ if name != "":
 
 if alias != "":
     if len(condition) < 1:
-        condition = {"alias": alias}
+        condition = {"aliases.name": alias}
     else:
-        condition = {"$and": [condition, {"alias": alias}]}
+        condition = {"$and": [condition, {"aliases.name": alias}]}
 
 if tag != "":
     if len(condition) < 1:
-        condition = {"tag": tag}
+        condition = {"tags.value": tag}
     elif "$and" in condition:
-        condition["$and"].append({"tag": tag})
+        condition["$and"].append({"tags.value": tag})
     else:
-        condition = {"$and": [condition, {"tag": tag}]}
+        condition = {"$and": [condition, {"tags.value": tag}]}
 
 print("Content-Type: text/html")
 print()
@@ -61,9 +61,12 @@ if len(condition) < 1:
     sys.exit()
 
 results = collection.find(condition)
+if results.count() < 1:
+    print("<p>検索結果はありません</p>")
+    print("</body></html>")
+    sys.exit()
 results.sort("rating.count", pymongo.DESCENDING)
 for result in results:
-    # print(result)
     print("<p><b>ID</b>：{}</p>".format(result["id"]))
     print("<p><b>名前</b>：{}</p>".format(result["name"]))
     if "aliases" in result:
