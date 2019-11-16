@@ -16,7 +16,7 @@ import random
 
 def add_list(filename, pos=False, neg=False):
     result = []
-    with open("tmp/rt-polaritydata/{}".format(filename), encoding="utf8", errors="ignore") as polarity:
+    with open("tmp/rt-polaritydata/{}".format(filename), mode="r", encoding="utf8", errors="ignore") as polarity:
         if pos == True:
             result.extend(["+1 {}".format(sentence.strip()) for sentence in polarity])
         if neg == True:
@@ -29,3 +29,17 @@ polarities.extend(add_list("rt-polarity.pos", neg=True))
 
 
 random.shuffle(polarities)
+
+with open("tmp/sentiment.txt", mode="w", encoding="utf8", errors="ignore") as sentiment:
+    sentiment.write("\n".join(polarities))
+
+with open("tmp/sentiment.txt", mode="r", encoding="utf8", errors="ignore") as sentiment:
+    pos = 0
+    neg = 0
+    for line in sentiment:
+        if line.startswith("+1"):
+            pos += 1
+        if line.startswith("-1"):
+            neg += 1
+
+print("positive sentences : {} \nnegative sentences : {}".format(pos, neg))
