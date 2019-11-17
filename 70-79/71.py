@@ -4,28 +4,21 @@
 # https://docs.oracle.com/cd/E16338_01/text.112/b61357/astopsup.htm
 # oracleの英語のデフォルトストップリストより
 
-stop_words = ("a	did	in	only	then	where	"
-"all	do	into	onto	there	whether	"
-"almost	does	is	therefore	which	"
-"also	either	it	our	these	while	"
-"although	for	its	ours	they	who	"
-"an	from	just	s	this	whose	"
-"had	ll	shall	those	why	"
-"any	has	me	she	though	will	"
-"are	have	might	should	through	with	"
-"as	having	Mr	since	thus	would	"
-"at	he	Mrs	so	to	yet	"
-"be	her	Ms	some	too	you	"
-"because	here	my	still	until	your	"
-"been	hers	no	such	ve	yours	"
-"both	him	non	t	very	"
-"but	his	nor	than	was	"
-"by	how	not	that	we	"
-"could	i	on	their	what	"
-"d	if	one	them	when").lower().split("\t")
+import csv
+
+stop_words = []
+
+with open("tmp/stopword.tsv") as target:
+    tsv = csv.reader(target, delimiter="\t")
+    for t in tsv:
+        for word in t:
+            stop_words.append(word.lower())
+
 
 def is_stopword(word: str) -> bool:
     return word.lower() in stop_words
 
 assert is_stopword("a")
+assert is_stopword("A")
+assert is_stopword("mrs")
 assert not is_stopword("b")
