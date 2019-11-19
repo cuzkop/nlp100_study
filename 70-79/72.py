@@ -3,7 +3,6 @@
 
 
 import csv
-import sys
 from collections import Counter
 
 from stemming.porter2 import stem
