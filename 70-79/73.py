@@ -21,11 +21,11 @@ with open("tmp/stopword.tsv") as target:
 def is_stopword(word: str) -> bool:
     return word.lower() in stop_words
 
-def load_feature():
+def load_feature() -> dict:
     with open("tmp/features.txt", mode="r", encoding="utf8", errors="ignore") as feature:
         return {f.strip(): i for i, f in enumerate(feature, start=1)}
 
-def create_train_data(sentiments, feature_dict):
+def create_train_data(sentiments: list, feature_dict: dict):
     train_x = np.zeros([len(sentiments), len(feature_dict) + 1], dtype=np.float64)
     train_y = np.zeros(len(sentiments), dtype=np.float64)
     
