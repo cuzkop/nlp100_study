@@ -56,9 +56,15 @@ def extract_feature(data: str, feature_dict: dict) -> list:
 
     return train_x
 
+def learn(x_train: list, y_train: list, alpha: float, cnt: int):
+    theta = np.zeros(x_train.shape[1])
+    print(x_train.shape)
+    sys.exit()
+
 
 feature_dict = load_feature()
 
 with open("tmp/sentiment.txt", mode="r", encoding="utf8", errors="ignore") as sentiment:
     x_train, y_train = create_train_data(list(sentiment), feature_dict)
-    print(len(x_train), len(y_train))
+    
+theta = learn(x_train, y_train, 6.0, 1000)
