@@ -58,8 +58,17 @@ def extract_feature(data: str, feature_dict: dict) -> list:
 
 def learn(x_train: list, y_train: list, alpha: float, cnt: int):
     theta = np.zeros(x_train.shape[1])
-    print(x_train.shape)
+    c = cost(x_train, y_train, theta)
     sys.exit()
+
+def cost(x_train: list, y_train: list, theta: list) -> float: 
+    y_size = y_train.size
+    hypo = hypothesis(x_train, theta)
+    j = 1 / y_size * np.sum(-y_train * np.log(hypo) - (np.ones(y_size) - y_train) * np.log(np.ones(y_size) - hypo))
+    return j
+
+def hypothesis(x_train: list, theta: list):
+    return 1.0 / (1.0 + np.exp(-x_train.dot(theta)))
 
 
 feature_dict = load_feature()
