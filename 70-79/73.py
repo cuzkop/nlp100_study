@@ -59,7 +59,31 @@ def extract_feature(data: str, feature_dict: dict) -> list:
 def learn(x_train: list, y_train: list, alpha: float, cnt: int):
     theta = np.zeros(x_train.shape[1])
     c = cost(x_train, y_train, theta)
-    sys.exit()
+    print('\t学習開始\tcost：{}'.format(c))
+
+    for i in range(1, cnt + 1):
+
+        grad = gradient(x_train, y_train, theta)
+        theta -= alpha * grad
+        # print(theta)
+        # sys.exit()
+
+        # コストとthetaの最大調整量を算出して経過表示（100回に1回）
+        if i % 100 == 0:
+            c = cost(x_train, y_train, theta)
+            e = np.max(np.absolute(alpha * grad))
+            print('\t学習中(#{})\tcost：{}\tE:{}'.format(i, c, e))
+
+    c = cost(x_train, y_train, theta)
+    e = np.max(np.absolute(alpha * grad))
+    print('\t学習完了(#{}) \tcost：{}\tE:{}'.format(i, c, e))
+    return theta
+
+def gradient(x_train: list, y_train: list, theta: list) -> list:
+    y_size = y_train.size
+    hypo = hypothesis(x_train, theta)
+    grad = 1 / y_size * (hypo - y_train).dot(x_train)
+    return grad
 
 def cost(x_train: list, y_train: list, theta: list) -> float: 
     y_size = y_train.size
@@ -75,5 +99,5 @@ feature_dict = load_feature()
 
 with open("tmp/sentiment.txt", mode="r", encoding="utf8", errors="ignore") as sentiment:
     x_train, y_train = create_train_data(list(sentiment), feature_dict)
-    
+
 theta = learn(x_train, y_train, 6.0, 1000)
