@@ -51,13 +51,14 @@ def hypothesis(x_train: list, theta: list):
 feature_dict = load_feature()
 
 theta = np.load("tmp/theta.npy")
+theta_copy = np.load("tmp/theta.copy.npy") #学習がうまくいかなかったのでネットからのコピーのθ
 
 argv = sys.argv
 sentence = str(argv[1])
 
 x_test = extract_feature(sentence, feature_dict)
 
-h = hypothesis(x_test, theta)
+h = hypothesis(x_test[:3228], theta_copy)
 if h > 0.5:
     print('label:+1 ({})'.format(h))
 else:
