@@ -27,7 +27,30 @@ def get_dict_feature() -> dict:
 
 def create_datasets(sentiment: list, dict_features: dict):
     data_x = np.zeros([len(sentiment), len(dict_features) + 1], dtype=np.float64)
-    print(data_x)
+    data_y = np.zeros(len(sentiment), dtype=np.float64)
+    
+    for i, s in enumerate(sentiment):
+        data_x[i] = extract_features(s[3:], dict_features)
+
+def extract_features(sentiment, dict_features):
+    data_one_x = np.zeros(len(dict_features) + 1, dtype=np.float64)
+    data_one_x[0] = 1
+
+    for s in sentiment.split(" "):
+        s = s.strip()
+
+        if is_stopword(s) == True:
+            continue
+
+        s = stem(s)
+
+        try:
+            data_one_x[dict_features[s]] = 1
+        except:
+            pass
+
+    return data_one_x
+
 
 dict_features = get_dict_feature()
 
