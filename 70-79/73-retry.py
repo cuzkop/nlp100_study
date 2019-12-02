@@ -32,6 +32,12 @@ def create_datasets(sentiment: list, dict_features: dict):
     for i, s in enumerate(sentiment):
         data_x[i] = extract_features(s[3:], dict_features)
 
+        if s[0:2] == "+1":
+            data_y[i] = 1
+        
+        
+    return data_x, data_y
+
 def extract_features(sentiment, dict_features):
     data_one_x = np.zeros(len(dict_features) + 1, dtype=np.float64)
     data_one_x[0] = 1
@@ -56,3 +62,4 @@ dict_features = get_dict_feature()
 
 with open("tmp/sentiment.txt", mode="r", encoding="utf8") as sentiment:
     data_x, data_y = create_datasets(list(sentiment), dict_features)
+
