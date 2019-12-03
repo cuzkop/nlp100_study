@@ -3,6 +3,7 @@
 
 import csv
 import sys
+import random
 from collections import Counter
 
 import numpy as np
@@ -57,9 +58,51 @@ def extract_features(sentiment, dict_features):
 
     return data_one_x
 
+def learn(data_x, data_y, alpha, count):
+    w = random.randrange(len(data_y) + 1)
+    theta = np.zeros(data_x.shape[1])
+    c = cost(data_x, theta, data_y, w)
+
+    print('\t学習開始\tcost：{}'.format(c))
+    
+    for i in range(count):
+        grad = gradient(data_x, theta, data_y)
+        theta -= alpha * grad
+        print(grad)
+        sys.exit()
+
+def cost(data_x, theta, data_y, w):
+    m = data_y.size
+    h = hypothesis(data_x, theta, w)
+    j = 1 / m * np.sum(-data_y * np.log(h) - (np.ones(m) - data_y) * np.log(np.ones(m) - h))
+
+    return j
+
+def hypothesis(data_x, theta, w):
+    return 1.0 / (1.0 + np.exp(-data_x.dot(theta)))
+    # return 1.0 / (1.0 + np.exp(-data_x.dot(theta)))
+
+def gradient(data_x, theta, data_y):
+    m = data_y.size
+    h = hypothesis(data_x, theta, 1)
+    s = h - data_y
+    p, ms = 0, 0
+    for ss in s:
+        if ss == 0.5:
+            p += 1
+        else:
+            ms += 1
+    
+    print(p, ms)
+    sys.exit()
+    grad = 1 / m * (h - data_y).dot(data_x)
+
+    return grad
 
 dict_features = get_dict_feature()
 
 with open("tmp/sentiment.txt", mode="r", encoding="utf8") as sentiment:
     data_x, data_y = create_datasets(list(sentiment), dict_features)
 
+print('学習率：{}\t学習繰り返し数：{}'.format(6.0, 1000))
+theta = learn(data_x, data_y, alpha=6.0, count=1000)
