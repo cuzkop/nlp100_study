@@ -5,10 +5,11 @@
 import csv
 from collections import Counter
 
-from stemming.porter2 import stem
+from nltk.stem.porter import PorterStemmer
 import sys
 
 stop_words = []
+stemmer = PorterStemmer()
 
 with open("tmp/stopword.tsv") as target:
     tsv = csv.reader(target, delimiter="\t")
@@ -28,7 +29,7 @@ with open("tmp/sentiment.txt", mode="r", encoding="utf8", errors="ignore") as se
             if is_stopword(word) == True:
                 continue
 
-            word = stem(word)
+            word = stemmer.stem(word)
             if "\n" in word:
                 word = word.strip("\n")
 
@@ -37,7 +38,7 @@ with open("tmp/sentiment.txt", mode="r", encoding="utf8", errors="ignore") as se
 
             counter.update([word])
 
-features = [word for word, cnt in counter.items() if cnt >= 6]
+features = [word for word, cnt in counter.items() if cnt >= 5]
 
 with open("tmp/features_retry.txt", mode="w", encoding="utf8", errors="ignore") as features_file:
     features_file.write("\n".join(features))
