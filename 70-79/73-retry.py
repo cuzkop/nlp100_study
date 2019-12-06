@@ -5,6 +5,7 @@ import csv
 import sys
 import random
 from collections import Counter
+from sklearn.linear_model import LogisticRegression
 
 import numpy as np
 
@@ -22,31 +23,42 @@ with open("tmp/stopword.tsv") as target:
 def is_stopword(word: str) -> bool:
     return word.lower() in stop_words
 
-def create_train(sentiment):
+def create_feature_dict(features):
+    feature_dict = {}
+    for i, f in enumerate(features):
+        feature_dict[f.strip()] = i
+
+    return feature_dict
+
+def create_train(sentiment, feature_dict):
+    x_train = np.zeros([len(sentiment), len(feature_dict)], dtype=np.float64)
     y_train = np.zeros(len(sentiment), dtype=np.float64)
-    print(sentiment[0])
-    sys.exit()
+
     for i, s in enumerate(sentiment):
         if s[:2] == "+1":
             y_train[i] = 1
         else:
             y_train[i] = 0
+        
+        for word in s.split(" "):
+            if is_stopword(word):
+                continue
+
+            if word in feature_dict:
+                x_train[i][feature_dict[word]] = 1
+
+
+    return x_train, y_train
+        
     
 
 with open("tmp/features_retry.txt") as features:
-    feature_list = features.read().splitlines()
+    feature_dict = create_feature_dict(features)
 
 
 
 with open("tmp/sentiment.txt", mode="r", encoding="utf8") as sentiment:
-    x_train, y_train = create_train(sentiment.readlines())
-    # for s in sentiment:
-    #     print(s)
-    # train_y = [1 if s[:2] == "+1" else 0 for s in sentiment]
-    # for s in sentiment:
-    #     print(s)
-    
-    # data_x, data_y = create_datasets(list(sentiment), dict_features)
+    x_train, y_train = create_train(sentiment.readlines(), feature_dict)
 
-# print('学習率：{}\t学習繰り返し数：{}'.format(6.0, 1000))
-# theta = learn(data_x, data_y, alpha=6.0, count=1000)
+lr = LogisticRegression()
+lr.fit(x_train, y_train)
