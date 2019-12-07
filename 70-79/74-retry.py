@@ -1,14 +1,18 @@
-# 73. 学習
-# 72で抽出した素性を用いて，ロジスティック回帰モデルを学習せよ．
+# 74. 予測
+# 73で学習したロジスティック回帰モデルを用い，与えられた文の極性ラベル（正例なら"+1"，負例なら"-1"）と，その予測確率を計算するプログラムを実装せよ．
 
 import csv
 import sys
 import random
 from collections import Counter
 from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
 
 import numpy as np
 
+from nltk.stem.porter import PorterStemmer
+stemmer = PorterStemmer()
 
 stop_words = []
 
@@ -48,8 +52,6 @@ def create_train(sentiment, feature_dict):
 
 
     return x_train, y_train
-        
-    
 
 with open("tmp/features_retry.txt") as features:
     feature_dict = create_feature_dict(features)
@@ -57,7 +59,26 @@ with open("tmp/features_retry.txt") as features:
 
 
 with open("tmp/sentiment.txt", mode="r", encoding="utf8") as sentiment:
-    x_train, y_train = create_train(sentiment.readlines(), feature_dict)
+    x, y = create_train(sentiment.readlines(), feature_dict)
+    X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=1)
 
-lr = LogisticRegression()
-lr.fit(x_train, y_train)
+    lr = LogisticRegression(solver="sag", max_iter=10000, C=0.2)
+    lr.fit(X_train, y_train)
+    y_train_pred = lr.predict(X_train)
+    y_test_pred = lr.predict(X_test)
+    print(accuracy_score(y_train, y_train_pred), accuracy_score(y_test, y_test_pred))
+    print(len(lr.coef_[0]))
+
+# lr = LogisticRegression(n_jobs=-1)
+# lr.fit(x_train, y_train)
+
+
+# with open("tmp/sentiment.txt", mode="r", encoding="utf8") as sentiment:
+#     x_test, _ = create_train(sentiment.readlines(), feature_dict)
+
+# x_test, _ = create_train(sentence, feature_dict)
+
+# result = lr.predict(x_test)
+# for r in result:
+#     print(r)
+# print(x_test)
