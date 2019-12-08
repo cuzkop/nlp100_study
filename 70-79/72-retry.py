@@ -38,7 +38,7 @@ with open("tmp/sentiment.txt", mode="r", encoding="utf8", errors="ignore") as se
 
             counter.update([word])
 
-features = [word for word, cnt in counter.items() if cnt >= 5]
+features = [word for word, cnt in counter.items() if cnt >= 6]
 
 with open("tmp/features_retry.txt", mode="w", encoding="utf8", errors="ignore") as features_file:
     features_file.write("\n".join(features))
