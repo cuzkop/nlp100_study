@@ -10,7 +10,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 
 import scipy.stats
-from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import RandomizedSearchCV
 from sklearn.metrics import f1_score
@@ -65,64 +64,13 @@ with open("tmp/features_retry.txt") as features:
 
 with open("tmp/sentiment.txt", mode="r", encoding="utf8") as sentiment:
 
-    # max_score = 0
-    # SearchMethod = 0
-    # LR_grid = {LogisticRegression(): {"C": [10 ** i for i in range(-5, 6)],
-    #                                 "random_state": [i for i in range(0, 101)]}}
-    # LR_random = {LogisticRegression(): {"C": scipy.stats.uniform(0.00001, 1000),
-    #                                     "random_state": scipy.stats.randint(0, 100)}}
-
     x, y = create_train(sentiment.readlines(), feature_dict)
     X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=1)
-    print(y_train)
-    print(y_test)
 
-    # for model, param in LR_grid.items():
-    #     clf = GridSearchCV(model, param)
-    #     clf.fit(X_train, y_train)
-    #     pred_y = clf.predict(X_test)
-    #     score = f1_score(y_test, pred_y, average="micro")
-
-    #     if max_score < score:
-    #         max_score = score
-    #         best_param = clf.best_params_
-    #         best_model = model.__class__.__name__
-
-
-    # for model, param in LR_random.items():
-    #     clf =RandomizedSearchCV(model, param)
-    #     clf.fit(X_train, y_train)
-    #     pred_y = clf.predict(X_test)
-    #     score = f1_score(y_test, pred_y, average="micro")
-
-    #     if max_score < score:
-    #         SearchMethod = 1
-    #         max_score = score
-    #         best_param = clf.best_params_
-    #         best_model = model.__class__.__name__
-
-    
-    # if SearchMethod == 0:
-    #     print("サーチ方法:グリッドサーチ")
-    # else:
-    #     print("サーチ方法:ランダムサーチ")
-    # print("ベストスコア:{}".format(max_score))
-    # print("モデル:{}".format(best_model))
-    # print("パラメーター:{}".format(best_param))
-
-    # #ハイパーパラメータを調整しない場合との比較
-    model = LogisticRegression()
+    model = LogisticRegression(C=1e-05, random_state=0)
     model.fit(X_train, y_train)
+    y_pred = model.predict(X_test)
     score = model.score(X_test, y_test)
-    print("")
-    print("デフォルトスコア:", score)
-
-    # for c in costs:
-    # lr = LogisticRegression(solver="sag", max_iter=10000, C=5)
-    # lr.fit(X_train, y_train)
-    # y_train_pred = lr.predict(X_train)
-    # y_test_pred = lr.predict(X_test)
-    # print(y_test_pred[:10])
-    # print(y_test[:10])
-    # print(accuracy_score(y_train, y_train_pred), accuracy_score(y_test, y_test_pred))
-    # print(len(lr.coef_[0]))
+    print(X_test)
+    print(y_pred)
+    print(score)
