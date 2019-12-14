@@ -3,6 +3,8 @@
 
 
 import csv
+import re
+import sys
 from collections import Counter
 
 from nltk.stem.porter import PorterStemmer
@@ -18,11 +20,17 @@ with open("tmp/stopword.tsv") as target:
 
 
 def is_stopword(word: str) -> bool:
-    return word.lower() in stop_words
+    return word.lower() not in stop_words
 
 counter = Counter()
 with open("tmp/sentiment.txt", mode="r", encoding="utf8", errors="ignore") as sentiment:
     for s in sentiment:
+        ss = re.split(r'\s|,|\.|\(|\)|\'|/|\'|\[|\]|-', s[3:])
+        # print(ss)
+        f = filter(is_stopword, ss)
+        xs = map(stemmer.stem, f)
+        print(list(xs))
+        sys.exit()
         for word in s[3:].split(" "):
             word = word.strip()
             if is_stopword(word) == True:
