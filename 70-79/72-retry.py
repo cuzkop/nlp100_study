@@ -6,7 +6,6 @@ import csv
 from collections import Counter
 
 from nltk.stem.porter import PorterStemmer
-import sys
 
 stop_words = []
 stemmer = PorterStemmer()
@@ -33,7 +32,7 @@ with open("tmp/sentiment.txt", mode="r", encoding="utf8", errors="ignore") as se
             if "\n" in word:
                 word = word.strip("\n")
 
-            if word != "!" and word != "?" and len(word) <= 1:
+            if word == "!" and word == "?" and len(word) <= 1:
                 continue
 
             counter.update([word])
