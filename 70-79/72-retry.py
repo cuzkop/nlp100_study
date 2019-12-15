@@ -8,44 +8,41 @@ import sys
 from collections import Counter
 
 from nltk.stem.porter import PorterStemmer
+import nltk
+
+from nltk.corpus import stopwords
 
 stop_words = []
 stemmer = PorterStemmer()
+stop_words = frozenset(stopwords.words('english'))
 
-with open("tmp/stopword.tsv") as target:
-    tsv = csv.reader(target, delimiter="\t")
-    for t in tsv:
-        for word in t:
-            stop_words.append(word.lower())
+# with open("tmp/stopword.tsv") as target:
+#     tsv = csv.reader(target, delimiter="\t")
+#     for t in tsv:
+#         for word in t:
+#             stop_words.append(word.lower())
 
 
 def is_stopword(word: str) -> bool:
+    if word == '' or len(word) <= 2:
+        return False
+
+    if re.match(r'^[-=!@#$%^&*()_+|;";,.<>/?]+$', word): #記号等だったらFalse
+        return False
+
     return word.lower() not in stop_words
 
 counter = Counter()
 with open("tmp/sentiment.txt", mode="r", encoding="utf8", errors="ignore") as sentiment:
     for s in sentiment:
-        ss = re.split(r'\s|,|\.|\(|\)|\'|/|\'|\[|\]|-', s[3:])
-        # print(ss)
-        f = filter(is_stopword, ss)
-        xs = map(stemmer.stem, f)
-        print(list(xs))
-        sys.exit()
-        for word in s[3:].split(" "):
-            word = word.strip()
-            if is_stopword(word) == True:
-                continue
+        sentiment_list = re.split(r'\s|,|\.|\(|\)|\'|/|\'|\[|\]|-', s[3:])
+        filtered_list = filter(is_stopword, sentiment_list)
+        stems = list(map(stemmer.stem, filtered_list))
+        stems.insert(0, s[:2])
 
-            word = stemmer.stem(word)
-            if "\n" in word:
-                word = word.strip("\n")
+        counter.update([' '.join(stems)])
 
-            if word == "!" and word == "?" and len(word) <= 1:
-                continue
-
-            counter.update([word])
-
-features = [word for word, cnt in counter.items() if cnt >= 6]
+features = [word for word, cnt in counter.items()]
 
 with open("tmp/features_retry.txt", mode="w", encoding="utf8", errors="ignore") as features_file:
     features_file.write("\n".join(features))
