@@ -16,12 +16,6 @@ stop_words = []
 stemmer = PorterStemmer()
 stop_words = frozenset(stopwords.words('english'))
 
-# with open("tmp/stopword.tsv") as target:
-#     tsv = csv.reader(target, delimiter="\t")
-#     for t in tsv:
-#         for word in t:
-#             stop_words.append(word.lower())
-
 
 def is_stopword(word: str) -> bool:
     if word == '' or len(word) <= 2:
