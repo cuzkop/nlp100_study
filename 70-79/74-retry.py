@@ -21,7 +21,7 @@ stop_words = []
 stemmer = PorterStemmer()
 stop_words = frozenset(stopwords.words('english'))
 cv = CountVectorizer(encoding='utf-8')
-lr = LogisticRegression(solver='sag', random_state=1234)
+lr = LogisticRegression(solver='sag', random_state=1500, C=10000)
 
 def is_stopword(word: str) -> bool:
     if word == '' or len(word) <= 2:
@@ -39,6 +39,7 @@ with open("tmp/features_retry.txt") as features:
     for f in features:
         x.append(f[3:].strip())
         y.append(1.0 if f[0] == "+" else 0.0)
+
 
 x_cv = cv.fit_transform(x)
 lr.fit(x_cv, y)
