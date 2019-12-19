@@ -1,76 +1,68 @@
-# 74. 予測
-# 73で学習したロジスティック回帰モデルを用い，与えられた文の極性ラベル（正例なら"+1"，負例なら"-1"）と，その予測確率を計算するプログラムを実装せよ．
+# 72. 素性抽出
+# 極性分析に有用そうな素性を各自で設計し，学習データから素性を抽出せよ．素性としては，レビューからストップワードを除去し，各単語をステミング処理したものが最低限のベースラインとなるであろう．
+
 
 import csv
+import re
 import sys
-import random
 from collections import Counter
-from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score
-
-import scipy.stats
-from sklearn.model_selection import GridSearchCV
-from sklearn.model_selection import RandomizedSearchCV
-from sklearn.metrics import f1_score
-
-import numpy as np
 
 from nltk.stem.porter import PorterStemmer
-stemmer = PorterStemmer()
+import nltk
+
+from nltk.corpus import stopwords
+
+import numpy as np
+from sklearn.linear_model import LogisticRegression
+from sklearn.feature_extraction.text import CountVectorizer
+
 
 stop_words = []
-
-with open("tmp/stopword.tsv") as target:
-    tsv = csv.reader(target, delimiter="\t")
-    for t in tsv:
-        for word in t:
-            stop_words.append(word.lower())
-
+stemmer = PorterStemmer()
+stop_words = frozenset(stopwords.words('english'))
+cv = CountVectorizer(encoding='utf-8')
+lr = LogisticRegression(solver='sag', random_state=1234)
 
 def is_stopword(word: str) -> bool:
-    return word.lower() in stop_words
+    if word == '' or len(word) <= 2:
+        return False
 
-def create_feature_dict(features):
-    feature_dict = {}
-    for i, f in enumerate(features):
-        feature_dict[f.strip()] = i
+    if re.match(r'^[-=!@#$%^&*()_+|;";,.<>/?]+$', word): #記号等だったらFalse
+        return False
 
-    return feature_dict
+    return word.lower() not in stop_words
 
-def create_train(sentiment, feature_dict):
-    x_train = np.zeros([len(sentiment), len(feature_dict)], dtype=np.float64)
-    y_train = np.zeros(len(sentiment), dtype=np.float64)
-
-    for i, s in enumerate(sentiment):
-        if s[:2] == "+1":
-            y_train[i] = 1
-        else:
-            y_train[i] = -1
-        
-        for word in s.split(" "):
-            if is_stopword(word):
-                continue
-
-            if word in feature_dict:
-                x_train[i][feature_dict[word]] = 1
-
-
-    return x_train, y_train
 
 with open("tmp/features_retry.txt") as features:
-    feature_dict = create_feature_dict(features)
+    x = []
+    y = []
+    for f in features:
+        x.append(f[3:].strip())
+        y.append(1.0 if f[0] == "+" else 0.0)
 
+x_cv = cv.fit_transform(x)
+lr.fit(x_cv, y)
 
-with open("tmp/sentiment.txt", mode="r", encoding="utf8") as sentiment:
+texts = [
+    "simplistic , silly and tedious . ",
+    "it's so laddish and juvenile , only teenage boys could possibly find it funny . ",
+    "exploitative and largely devoid of the depth or sophistication that would make watching such a graphic treatment of the crimes bearable . ",
+    "effective but too-tepid biopic",
+    "if you sometimes like to go to the movies to have fun , wasabi is a good place to start . ",
+    "emerges as something rare , an issue movie that's so honest and keenly observed that it doesn't feel like one . ",
+    "with a cast that includes some of the top actors working in independent film , lovely & amazing involves us because it is so incisive , so bleakly amusing about how we go about our lives . "
+]
 
-    x, y = create_train(sentiment.readlines(), feature_dict)
-    X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=1)
+for text in texts:
+    text_list = re.split(r'\s|,|\.|\(|\)|\'|/|\'|\[|\]|-', text[3:])
+    filtered_list = filter(is_stopword, text_list)
+    stems = list(map(stemmer.stem, filtered_list))
+    x_test = ' '.join(stems)
+    x = cv.transform([x_test])
+    y_test_pred = lr.predict(x)
+    pr = lr.predict_proba(x)
 
-    model = LogisticRegression(C=1e-05, random_state=0)
-    model.fit(X_train, y_train)
-    y_pred = model.predict(X_test)
-    score = model.score(X_test, y_test)
-    print(X_test)
-    print(y_pred)
-    print(score)
+    print(x_test)
+    print('予測：{} 確率：{}\n'.format('+1' if y_test_pred[0] == 1 else '-1', pr[0][0] if y_test_pred[0] == 0 else pr[0][1]))
+
+    # counter.update([' '.join(stems)])
