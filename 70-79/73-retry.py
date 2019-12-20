@@ -19,9 +19,19 @@ from sklearn.feature_extraction.text import CountVectorizer
 
 stop_words = []
 stemmer = PorterStemmer()
-stop_words = frozenset(stopwords.words('english'))
 cv = CountVectorizer(encoding='utf-8')
 lr = LogisticRegression(solver='sag')
+
+stop_words = ['a', 'about', 'all', 'an', 'and', 'any', 'are', 'as', \
+            'at', 'be', 'been', 'but', 'by', 'can', 'could', 'do', \
+            'does', 'for', 'from', 'has', 'have', 'he', 'her', 'his', \
+            'how', 'i', 'if', 'in', 'into', 'is', 'it', 'its', 'made', \
+            'make', 'may', 'me', 'my', 'no', 'not', 'of', 'on', 'one', \
+            'or', 'out', 'she', 'should', 'so', 'some', 'than', 'that', \
+            'the', 'their', 'them', 'there', 'then', 'they', 'this', \
+            'those', 'to', 'too', 'us', 'was', 'we', 'what', 'when',\
+            'which', 'who', 'with', 'would', 'you', 'your', ''
+        ]
 
 def is_stopword(word: str) -> bool:
     if word == '' or len(word) <= 2:
@@ -33,7 +43,7 @@ def is_stopword(word: str) -> bool:
     return word.lower() not in stop_words
 
 
-with open("tmp/features_retry.txt") as features:
+with open("tmp/features_retry3.txt") as features:
     x = []
     y = []
     for f in features:

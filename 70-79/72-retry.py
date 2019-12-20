@@ -14,7 +14,16 @@ from nltk.corpus import stopwords
 
 stop_words = []
 stemmer = PorterStemmer()
-stop_words = frozenset(stopwords.words('english'))
+stop_words = ['a', 'about', 'all', 'an', 'and', 'any', 'are', 'as', \
+            'at', 'be', 'been', 'but', 'by', 'can', 'could', 'do', \
+            'does', 'for', 'from', 'has', 'have', 'he', 'her', 'his', \
+            'how', 'i', 'if', 'in', 'into', 'is', 'it', 'its', 'made', \
+            'make', 'may', 'me', 'my', 'no', 'not', 'of', 'on', 'one', \
+            'or', 'out', 'she', 'should', 'so', 'some', 'than', 'that', \
+            'the', 'their', 'them', 'there', 'then', 'they', 'this', \
+            'those', 'to', 'too', 'us', 'was', 'we', 'what', 'when',\
+            'which', 'who', 'with', 'would', 'you', 'your', ''
+        ]
 
 
 def is_stopword(word: str) -> bool:
@@ -27,7 +36,7 @@ def is_stopword(word: str) -> bool:
     return word.lower() not in stop_words
 
 counter = Counter()
-with open("tmp/sentiment.txt", mode="r", encoding="utf8", errors="ignore") as sentiment:
+with open("tmp/sentiment3.txt", mode="r", encoding="utf8", errors="ignore") as sentiment:
     for s in sentiment:
         sentiment_list = re.split(r'\s|,|\.|\(|\)|\'|/|\'|\[|\]|-', s[3:])
         filtered_list = filter(is_stopword, sentiment_list)
@@ -38,5 +47,5 @@ with open("tmp/sentiment.txt", mode="r", encoding="utf8", errors="ignore") as se
 
 features = [word for word, cnt in counter.items()]
 
-with open("tmp/features_retry.txt", mode="w", encoding="utf8", errors="ignore") as features_file:
+with open("tmp/features_retry3.txt", mode="w", encoding="utf8", errors="ignore") as features_file:
     features_file.write("\n".join(features))

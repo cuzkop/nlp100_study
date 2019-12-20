@@ -17,11 +17,21 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.feature_extraction.text import CountVectorizer
 
 
-stop_words = []
+
 stemmer = PorterStemmer()
-stop_words = frozenset(stopwords.words('english'))
 cv = CountVectorizer(encoding='utf-8')
 lr = LogisticRegression(solver='sag', random_state=1500, C=10000)
+
+stop_words = ['a', 'about', 'all', 'an', 'and', 'any', 'are', 'as', \
+            'at', 'be', 'been', 'but', 'by', 'can', 'could', 'do', \
+            'does', 'for', 'from', 'has', 'have', 'he', 'her', 'his', \
+            'how', 'i', 'if', 'in', 'into', 'is', 'it', 'its', 'made', \
+            'make', 'may', 'me', 'my', 'no', 'not', 'of', 'on', 'one', \
+            'or', 'out', 'she', 'should', 'so', 'some', 'than', 'that', \
+            'the', 'their', 'them', 'there', 'then', 'they', 'this', \
+            'those', 'to', 'too', 'us', 'was', 'we', 'what', 'when',\
+            'which', 'who', 'with', 'would', 'you', 'your', ''
+        ]
 
 def is_stopword(word: str) -> bool:
     if word == '' or len(word) <= 2:
@@ -33,7 +43,7 @@ def is_stopword(word: str) -> bool:
     return word.lower() not in stop_words
 
 
-with open("tmp/features_retry.txt") as features:
+with open("tmp/features_retry3.txt") as features:
     x = []
     y = []
     for f in features:
@@ -44,14 +54,18 @@ with open("tmp/features_retry.txt") as features:
 x_cv = cv.fit_transform(x)
 lr.fit(x_cv, y)
 
-texts = [
-    "simplistic , silly and tedious . ",
-    "it's so laddish and juvenile , only teenage boys could possibly find it funny . ",
-    "exploitative and largely devoid of the depth or sophistication that would make watching such a graphic treatment of the crimes bearable . ",
-    "effective but too-tepid biopic",
-    "if you sometimes like to go to the movies to have fun , wasabi is a good place to start . ",
-    "emerges as something rare , an issue movie that's so honest and keenly observed that it doesn't feel like one . ",
-    "with a cast that includes some of the top actors working in independent film , lovely & amazing involves us because it is so incisive , so bleakly amusing about how we go about our lives . "
+texts = [\
+    'perhaps the best sports movie i''ve ever seen.', \
+    'i had more fun watching spy than i had with most of the big summer movies.', \
+    'vividly conveys the shadow side of the 30-year friendship between two english women.', \
+    'an excruciating demonstration of the unsalvageability of a movie saddled with an amateurish screenplay.', \
+    'sadly , hewitt''s forte is leaning forward while wearing low-cut gowns , not making snappy comebacks.', \
+    'since lee is a sentimentalist , the film is more worshipful than your random e ! true hollywood story.' \
+    "simplistic , silly and tedious . " \
+    "it's so laddish and juvenile , only teenage boys could possibly find it funny . " \
+    "exploitative and largely devoid of the depth or sophistication that would make watching such a graphic treatment of the crimes bearable . " \
+    
+
 ]
 
 for text in texts:
