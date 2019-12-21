@@ -7,16 +7,13 @@ import re
 import sys
 from collections import Counter
 
-from nltk.stem.porter import PorterStemmer
+import joblib
 import nltk
-
-from nltk.corpus import stopwords
-
 import numpy as np
-from sklearn.linear_model import LogisticRegression
+from nltk.corpus import stopwords
+from nltk.stem.porter import PorterStemmer
 from sklearn.feature_extraction.text import CountVectorizer
-
-
+from sklearn.linear_model import LogisticRegression
 
 stemmer = PorterStemmer()
 cv = CountVectorizer(encoding='utf-8')
@@ -53,6 +50,8 @@ with open("tmp/features_retry3.txt") as features:
 
 x_cv = cv.fit_transform(x)
 lr.fit(x_cv, y)
+joblib.dump(cv, 'tmp/cv73-retry.learn')
+joblib.dump(lr, 'tmp/lr73-retry.learn')
 
 texts = [\
     'perhaps the best sports movie i''ve ever seen.', \
@@ -60,10 +59,10 @@ texts = [\
     'vividly conveys the shadow side of the 30-year friendship between two english women.', \
     'an excruciating demonstration of the unsalvageability of a movie saddled with an amateurish screenplay.', \
     'sadly , hewitt''s forte is leaning forward while wearing low-cut gowns , not making snappy comebacks.', \
-    'since lee is a sentimentalist , the film is more worshipful than your random e ! true hollywood story.' \
-    "simplistic , silly and tedious . " \
-    "it's so laddish and juvenile , only teenage boys could possibly find it funny . " \
-    "exploitative and largely devoid of the depth or sophistication that would make watching such a graphic treatment of the crimes bearable . " \
+    'since lee is a sentimentalist , the film is more worshipful than your random e ! true hollywood story.', \
+    "simplistic , silly and tedious . ", \
+    "it's so laddish and juvenile , only teenage boys could possibly find it funny . ", \
+    "exploitative and largely devoid of the depth or sophistication that would make watching such a graphic treatment of the crimes bearable . ", \
     
 
 ]
