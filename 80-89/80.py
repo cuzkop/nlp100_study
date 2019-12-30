@@ -9,3 +9,11 @@
 # トークンの先頭と末尾に出現する次の文字を削除: .,!?;:()[]'"
 # 空文字列となったトークンは削除
 # 以上の処理を適用した後，トークンをスペースで連結してファイルに保存せよ．
+
+import sys
+
+with open('tmp/enwiki-20150112-400-r100-10576.txt', mode='r') as txt_file, open('tmp/80.txt', mode='w') as write_file:
+    cnt = 1
+    for line in txt_file:
+        line_list = [x.strip('.,!?;:()[]\'"') for x in line.split() if len(x) > 0]
+        write_file.writelines(' '.join(line_list)+'\n')
